@@ -86,11 +86,14 @@ def _infer_ancestry(snps, inference_task, fhe_client, server):
 
         batch_encrypted = fhe_client.encrypt(batch_snps, batch)
         batch_scores_encrypted = server.request_run_circuit(batch_encrypted, batch)
-        slice_scores = fhe_client.decrypt(batch_scores_encrypted, batch)
+        batch_scores = fhe_client.decrypt(batch_scores_encrypted, batch)
+
+        current_window_count = batch_scores.shape[3]
+        lower_window = lower // window_size
 
         for population in range(population_count):
-            for snp in range(len(slice_scores)):
-                per_population_scores[0, 0, population, snp] = slice_scores[0, 0, population, snp]
+            for window in range(current_window_count):
+                per_population_scores[0, 0, population, lower_window + window] = batch_scores[0, 0, population, window]
 
     per_population_scores = torch.from_numpy(per_population_scores)
     per_population_scores = per_population_scores.to(torch.float32)
@@ -163,7 +166,7 @@ class _Server:
             self._active_batch_samples = current_batch_samples
 
             compiler = fhe.Compiler(self._compute_per_population_scores, {"snps": "encrypted"})
-            configuration = fhe.Configuration(global_p_error=0.001)
+            configuration = fhe.Configuration(global_p_error=0.01)
             circuit = compiler.compile(input_snps, configuration)
 
             self._batch_circuits.append(circuit)

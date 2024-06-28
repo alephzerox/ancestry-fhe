@@ -252,7 +252,7 @@ were made:
 1. Only steps 2 and 3 are done on the server, the rest of the steps are
 performed by the client.
 
-2. _global_p_error_ is set to 0.001 because the computations are robust
+2. _global_p_error_ is set to 0.01 because the computations are robust
 and getting an incorrect results is not a serious problem.
 
 3. We use a single individual per reference populations to remove the
@@ -282,19 +282,14 @@ The output of the test run:
 
     Summary
         Number of samples: 100
-
+    
         Performance
-            Clear:                   2.20 s/sample
-            FHE (including setup):   229.41 s/sample
-            FHE (excluding setup):   215.58 s/sample
-            
+            Clear:                   2.44 s/sample
+            FHE (including setup):   247.93 s/sample
+            FHE (excluding setup):   227.57 s/sample
+    
         Accuracy
-            Clear: 60.6 %
-            FHE:   19.1 %
+            Clear: 95.1 %
+            FHE:   28.8 %
 
 These numbers were achieved on a regular consumer laptop.
-
-As can be seen, the runtime is acceptable but the accuracy is not.
-
-An attempt at using one "composite" reference individual with the
-majority SNP at each position did not yield better results.

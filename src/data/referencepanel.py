@@ -119,6 +119,10 @@ class ReferencePanel:
         return ret_val
 
     @property
+    def sample_count(self):
+        return self._samples.shape[0]
+
+    @property
     def population_names(self):
         ret_val = self._population_to_index.keys()
         return ret_val
